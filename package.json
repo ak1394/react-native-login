@@ -1,7 +1,7 @@
 {
   "name": "react-native-login",
   "version": "0.0.1",
-  "description": "React Native module for lightweight authentication using Keycloak",
+  "description": "React Native module for lightweight universal authentication using Keycloak",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,5 +25,10 @@
   "bugs": {
     "url": "https://github.com/ak1394/react-native-login/issues"
   },
-  "homepage": "https://github.com/ak1394/react-native-login#readme"
+  "homepage": "https://github.com/ak1394/react-native-login#readme",
+  "dependencies": {
+    "base-64": "^0.1.0",
+    "query-string": "^4.2.3",
+    "react-native-uuid": "^1.4.8"
+  }
 }
