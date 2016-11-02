@@ -1,5 +1,4 @@
-import {AsyncStorage, Linking} from 'react-native';
-
+import { AsyncStorage, Linking } from 'react-native';
 import * as querystring from 'query-string';
 import uuid from 'react-native-uuid';
 import {decodeToken} from './util';
@@ -31,29 +30,23 @@ class Login {
     Linking.addEventListener('url', this.onOpenURL);
   }
 
-  start(conf) {
-    this.conf = conf;
-
-    return new Promise(function(resolve, reject) {
-      this.tokenStorage.loadTokens().then(tokens => {
-        if(tokens) {
-          resolve(tokens);
-        } else {
-          this.startBrowserFlow(resolve);
-        }
-      });
-    }.bind(this));
+  tokens() {
+    return this.tokenStorage.loadTokens();
   }
 
-  startBrowserFlow(resolve) {
-    const {url, state} = this.getLoginURL();
-    this.state = {
-      ...this.state,
-      resolve,
-      state,
-    };
+  start(conf) {
+    this.conf = conf;
+    return new Promise(function(resolve, reject) {
+      const {url, state} = this.getLoginURL();
+      this.state = {
+        ...this.state,
+        resolve,
+        reject,
+        state,
+      };
 
-    Linking.openURL(url);
+      Linking.openURL(url);
+    }.bind(this));
   }
 
   end() {
@@ -85,8 +78,12 @@ class Login {
 
     fetch(url, {method: 'POST', headers, body}).then(response => {
       response.json().then(json => {
-        this.tokenStorage.saveTokens(json);
-        this.state.resolve(json);
+        if(json.error) {
+          this.state.reject(json);
+        } else {
+          this.tokenStorage.saveTokens(json);
+          this.state.resolve(json);
+        }
       });
     });
   }
