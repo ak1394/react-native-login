@@ -4,7 +4,7 @@ import uuid from 'react-native-uuid';
 import {decodeToken} from './util';
 
 class TokenStorage {
-  constructor(key) { 
+  constructor(key) {
     this.key = key;
   }
 
