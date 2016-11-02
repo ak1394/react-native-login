@@ -5,10 +5,10 @@ React Native Login is a module for [React Native](https://facebook.github.io/rea
 
 ## Documentation
 
-- [Install](https://github.com/naoufal/react-native-login#install)
-- [Usage](https://github.com/naoufal/react-native-login#usage)
-- [Example](https://github.com/naoufal/react-native-login#example)
-- [License](https://github.com/naoufal/react-native-login#license)
+- [Install](https://github.com/ak1394/react-native-login#install)
+- [Usage](https://github.com/ak1394/react-native-login#usage)
+- [Example](https://github.com/ak1394/react-native-login#example)
+- [License](https://github.com/ak1394/react-native-login#license)
 
 ## Install
 
