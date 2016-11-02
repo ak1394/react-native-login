@@ -1,41 +1,77 @@
-import {Linking} from 'react-native';
+import {AsyncStorage, Linking} from 'react-native';
 
 import * as querystring from 'query-string';
 import uuid from 'react-native-uuid';
 import {decodeToken} from './util';
 
-// TODO track state transitions within Login instead of relying on external events
-// TODO publish state transitions, extend event emitter?
-export default class Login {
-  constructor(conf) { 
+class TokenStorage {
+  constructor(key) { 
+    this.key = key;
+  }
+
+  saveTokens(tokens) {
+    return AsyncStorage.setItem(this.key, JSON.stringify(tokens));
+  }
+
+  loadTokens() {
+    return new Promise((resolve, reject) => {
+      AsyncStorage.getItem(this.key).then(value => resolve(JSON.parse(value)));
+    });
+  }
+
+  clearTokens() {
+    return AsyncStorage.removeItem(this.key);
+  }
+}
+
+class Login {
+  constructor() {
+    this.state = {};
+    this.onOpenURL = this.onOpenURL.bind(this);
+    Linking.addEventListener('url', this.onOpenURL);
+  }
+
+  start(conf) {
     this.conf = conf;
-    Linking.addEventListener('url', (event) => this.handleOpenURL(event));
+
+    return new Promise(function(resolve, reject) {
+      this.tokenStorage.loadTokens().then(tokens => {
+        if(tokens) {
+          resolve(tokens);
+        } else {
+          this.startBrowserFlow(resolve);
+        }
+      });
+    }.bind(this));
   }
 
-  start() {
-    // start authentication flow
-    Linking.openURL(this.getLoginUrl());
-  }
+  startBrowserFlow(resolve) {
+    const {url, state} = this.getLoginURL();
+    this.state = {
+      ...this.state,
+      resolve,
+      state,
+    };
 
-  check() {
-    // check if user has logged in, tokens are valid, etc
+    Linking.openURL(url);
   }
 
   end() {
-    // logout user
-    // kill tokens?
+    return this.tokenStorage.clearTokens();
   }
 
-  handleOpenURL(event) {
-    if(event.url.startsWith(this.conf.success_uri)) {
+  onOpenURL(event) {
+    if(event.url.startsWith(this.conf.appsite_uri)) {
       const {state, code} = querystring.parse(querystring.extract(event.url));
-      this.retrieveTokens(code);
+      if(this.state.state === state) {
+        this.retrieveTokens(code);
+      }
     }
   }
 
   retrieveTokens(code) {
     const {redirect_uri, client_id} = this.conf;
-    const url = this.getRealmUrl() + '/protocol/openid-connect/token';
+    const url = this.getRealmURL() + '/protocol/openid-connect/token';
 
     const headers = new Headers();
     headers.set('Content-Type', 'application/x-www-form-urlencoded');
@@ -47,42 +83,45 @@ export default class Login {
       code
     });
 
-    fetch(url, {method: 'POST', headers, body}).then(function(response) {
-      response.json().then(function(json) {
-        console.log('id token', decodeToken(json.id_token));
+    fetch(url, {method: 'POST', headers, body}).then(response => {
+      response.json().then(json => {
+        this.tokenStorage.saveTokens(json);
+        this.state.resolve(json);
       });
     });
   }
 
-  foo() {
-    /*
-    console.log('fetch userinfo');
-    const headers1 = new Headers();
-    headers1.append("Authorization", "Bearer " + json.access_token);
-    headers1.append('Accept', 'application/json');
-    const params1 = {method: 'GET', headers: headers1};
-    fetch(userinfo, params1).then(response => response.json().then(json => console.log('userinfo', json)));
-    fetch(account, params1).then(response => response.json().then(json => console.log('account', json)));
-    */
+  decodeToken(token) {
+    return decodeToken(token);
   }
 
-  getRealmUrl() {
+  getRealmURL() {
     const {url, realm} = this.conf;
     const slash = url.endsWith('/') ? '' : '/';
     return url + slash + 'realms/' + encodeURIComponent(realm);
   }
 
-  getLoginUrl() {
+  getLoginURL() {
     const {redirect_uri, client_id, kc_idp_hint} = this.conf;
     const response_type = 'code';
     const state = uuid.v4();
-
-    return this.getRealmUrl() + '/protocol/openid-connect/auth?' + querystring.stringify({
+    const url = this.getRealmURL() + '/protocol/openid-connect/auth?' + querystring.stringify({
       kc_idp_hint,
       redirect_uri,
       client_id,
       response_type,
       state,
     });
+
+    return {url, state};
+  }
+
+  setTokenStorage(tokenStorage) {
+    this.tokenStorage = tokenStorage;
   }
 }
+
+const login = new Login();
+login.setTokenStorage(new TokenStorage('react-native-token-storage'));
+
+export default login;
