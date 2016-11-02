@@ -5,9 +5,10 @@ React Native Login is a module for [React Native](https://facebook.github.io/rea
 
 ## Documentation
 
-- [Install](https://github.com/naoufal/react-native-speech#install)
-- [Usage](https://github.com/naoufal/react-native-speech#usage)
-- [License](https://github.com/naoufal/react-native-speech#license)
+- [Install](https://github.com/naoufal/react-native-login#install)
+- [Usage](https://github.com/naoufal/react-native-login#usage)
+- [Example](https://github.com/naoufal/react-native-login#example)
+- [License](https://github.com/naoufal/react-native-login#license)
 
 ## Install
 
@@ -15,13 +16,14 @@ React Native Login is a module for [React Native](https://facebook.github.io/rea
 npm install --save react-native-login
 ```
 
-## App configuration
+## Usage
+
+### App configuration
 
 Please configure [Linking](https://facebook.github.io/react-native/docs/linking.html) module, including steps for handling Universal links.
 
 Also, add applinks:<APPSITE HOST> entry to Associated Domains Capability of your app.
 
-## Usage
 
 ### Imports
 
