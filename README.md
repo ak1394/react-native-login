@@ -63,7 +63,7 @@ Login.start(config).then(tokens => {
 // { access_token: '...', refresh_token: '...', id_token: '...', ...}
 ```
 
-Initiates login flow. Upon successfull completion, saves and returns set of tokens.
+Initiates login flow. Upon successfull completion, saves and returns a set of tokens.
 
 ### Logout
 
@@ -71,7 +71,7 @@ Initiates login flow. Upon successfull completion, saves and returns set of toke
 Login.end();
 ```
 
-Removes saved tokens. Subsequent calls to Login.tokens() will return null.
+Removes stored tokens. Subsequent calls to Login.tokens() will return null.
 
 ## License
 

@@ -1,6 +1,6 @@
 {
   "name": "react-native-login",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.2",
   "description": "React Native module for lightweight universal authentication using Keycloak",
   "main": "src/index.js",
   "scripts": {
