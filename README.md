@@ -73,6 +73,10 @@ Login.end();
 
 Removes stored tokens. Subsequent calls to Login.tokens() will return null.
 
+## Example
+
+Please see the example app [react-native-login-example] https://github.com/ak1394/react-native-login-example
+
 ## License
 
 The MIT License (MIT)
