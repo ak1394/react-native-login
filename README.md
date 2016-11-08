@@ -3,6 +3,8 @@
 React Native Login is a module for [React Native](https://facebook.github.io/react-native/) for implementing lightweight universal authentication using [Keycloak](http://keycloak.org)
 
 
+See [Simple social login for React Native apps](https://medium.com/@ak1394/simple-social-login-for-react-native-apps-71279bf80ffc) for details.
+
 ## Documentation
 
 - [Install](https://github.com/ak1394/react-native-login#install)
